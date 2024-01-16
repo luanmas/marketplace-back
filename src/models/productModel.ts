@@ -1,5 +1,5 @@
 import { connection } from '../database/connection';
-import { IProduct } from '../types/product'
+import { IProduct } from '../types/product';
 
 export const getAll = async () => {
     const [products] = await connection.query('SELECT * FROM products')
