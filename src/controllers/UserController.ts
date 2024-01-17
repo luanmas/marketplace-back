@@ -10,15 +10,16 @@ export const UserController = {
         const { name, email, password } = req.body;
         const userExist = await userRepository.getUser(email);
         
-        if(userExist) return res.status(400).json({ message: "Email já registrado!" })
+        if(userExist.email) return res.status(400).json({ message: "Email já registrado!" })
 
         const hashPassword = await bcrypt.hash(password, 10);
 
-        const newUser = await createUser({ name, email, password: hashPassword })
+        await createUser({ name, email, password: hashPassword });
 
         res.status(201).json({
             message: "User created",
-            newUser
+            name,
+            email
         })
     }
 }
