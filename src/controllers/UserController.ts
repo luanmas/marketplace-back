@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 // import jwt from 'jsonwebtoken';
 import { userRepository } from '../repositories/userRepository';
-import { createUser } from '../models/userModel'
+import { createUser } from '../models/userModel';
 
 
 export const UserController = {
@@ -14,7 +14,7 @@ export const UserController = {
 
         const hashPassword = await bcrypt.hash(password, 10);
 
-        const newUser = await createUser({ name, email, hashPassword })
+        const newUser = await createUser({ name, email, password: hashPassword })
 
         res.status(201).json({
             message: "User created",
