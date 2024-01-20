@@ -28,8 +28,6 @@ export const UserController = {
 
         const user = await userRepository.getUserByEmail(email);
         
-        console.log("aaaaaaaaaa", user);
-        console.log("bbbbbbbbbb", password);
         if(!user) return res.status(400).json({ message: "Email ou senha inválidos" })
 
         const verifyPass = await bcrypt.compare(password, user.password);
