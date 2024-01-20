@@ -8,7 +8,7 @@ import { createUser } from '../models/userModel';
 export const UserController = {
     create: async (req : Request, res: Response) => {
         const { name, email, password } = req.body;
-        const user = await userRepository.getUser(email);
+        const user = await userRepository.getUserByEmail(email);
         
         if(user) return res.status(400).json({ message: "Email já registrado!" })
 
@@ -26,7 +26,7 @@ export const UserController = {
     login: async (req : Request, res: Response) => {
         const { email, password } = req.body;
 
-        const user = await userRepository.getUser(email);
+        const user = await userRepository.getUserByEmail(email);
         
         console.log("aaaaaaaaaa", user);
         console.log("bbbbbbbbbb", password);
@@ -44,6 +44,14 @@ export const UserController = {
             token,
             user: userLogin
         });
+    },
+
+    getProfile: async (req : Request, res: Response) => {
+        const userLogged = req.user;
+
+        res.json({
+            user: userLogged
+        })
     }
 }
 
