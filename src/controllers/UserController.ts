@@ -2,31 +2,37 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { userRepository } from '../repositories/userRepository';
-import { createUser } from '../models/userModel';
 
+interface authProfile extends Request {
+    name: string;
+    email: string;
+}
 
 export const UserController = {
     create: async (req : Request, res: Response) => {
         const { name, email, password } = req.body;
-        const user = await userRepository.getUserByEmail(email);
+        const user = await userRepository.findOneBy({ email });
         
         if(user) return res.status(400).json({ message: "Email já registrado!" })
 
         const hashPassword = await bcrypt.hash(password, 10);
 
-        await createUser({ name, email, password: hashPassword });
+        const newUser = userRepository.create({ name, email, password: hashPassword });
+
+        await userRepository.save(newUser);
+
+        const { password:_, ...userCreated } = newUser;
 
         res.status(201).json({
             message: "User created",
-            name,
-            email
+            userCreated
         })
     },
 
     login: async (req : Request, res: Response) => {
         const { email, password } = req.body;
 
-        const user = await userRepository.getUserByEmail(email);
+        const user = await userRepository.findOneBy({ email });
         
         if(!user) return res.status(400).json({ message: "Email ou senha inválidos" })
 
@@ -44,13 +50,13 @@ export const UserController = {
         });
     },
 
-    getProfile: async (req : Request, res: Response) => {
-        const userLogged = req.user;
+    // getProfile: async (req : authProfile, res: Response) => {
+    //     const userLogged = req.user;
 
-        res.json({
-            user: userLogged
-        })
-    }
+    //     res.json({
+    //         user: userLogged
+    //     })
+    // }
 }
 
 

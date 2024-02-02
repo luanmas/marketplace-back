@@ -1,20 +1,20 @@
-import express from "express";
-import dotenv from 'dotenv';
-import route from "./routes/routes";
-import cors from "cors";
+import { AppDataSource } from "./database/data-source";
+import express from 'express';
+import cors from 'cors';
+import routes from "./routes";
+import dotenv from "dotenv";
 
-dotenv.config();
-const app = express();
-const PORT = process.env.PORT;
+AppDataSource.initialize().then(async () => {
+    console.log("Database logged");
+    dotenv.config();
+    const app = express();
 
-app.use(cors());
-app.use(express.json());
+    app.use(cors());
+    app.use(express.json())
+    app.use(routes);
 
-app.use("/", route);
-app.use("/api" , route);
+    app.listen(process.env.PORT, () => {
+        console.log(`server running ${process.env.PORT}`);
+    })
 
-console.log(PORT);
-
-app.listen(PORT, () => {
-    console.log(`Server on!`);
-})
+}).catch(error => console.log(error))
