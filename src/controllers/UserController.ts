@@ -3,11 +3,6 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { userRepository } from '../repositories/userRepository';
 
-interface authProfile extends Request {
-    name: string;
-    email: string;
-}
-
 export const UserController = {
     create: async (req : Request, res: Response) => {
         const { name, email, password } = req.body;
@@ -41,12 +36,10 @@ export const UserController = {
         if(!verifyPass) res.status(400).json({ message: "Email ou senha inválida" });
 
         const token = jwt.sign({ id: user.id }, process.env.JWT_PASS, { expiresIn: '8h' });
+        res.cookie('jwt', token, { maxAge: 8 * 60 * 60 * 1000, httpOnly: true });
 
-        const { password:_, ...userLogin } = user;
-
-        return res.json({
-            token,
-            user: userLogin
+        res.status(201).json({
+            message: "Logged",
         });
     },
 

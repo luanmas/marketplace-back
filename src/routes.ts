@@ -6,8 +6,8 @@ import { authMiddleware } from './middlewares/authMiddleware';
 
 const routes = express.Router();
 
-routes.post("/user", UserController.create);
-routes.get("/user", UserController.login);
+routes.post("/users/create", UserController.create);
+routes.post("/users/login", UserController.login);
 
 routes.use(authMiddleware);
 // routes.get("/profile", UserController.getProfile);
